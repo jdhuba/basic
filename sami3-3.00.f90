@@ -1958,9 +1958,9 @@
             enddo
         enddo
     endif
-    call mpi_bcast(sigidt,linesuv*7, &
+    call mpi_bcast(sigidt,linesuv*nneut, &
                    MPI_REAL,0,MPI_COMM_WORLD,ierr)
-    call mpi_bcast(sigint,linesnt*7, &
+    call mpi_bcast(sigint,linesnt*nneut, &
                    MPI_REAL,0,MPI_COMM_WORLD,ierr)
 
 !     below is altered from original
@@ -2192,6 +2192,15 @@
             + chloss(i,j)
             loss (i,j)  =  lossr / deni(i,nfl,nll,j)
         enddo
+
+!  add loss for NO+ below 90 km
+!  NEED TO IMPROVE THIS
+
+    if ( alts(i,nfl,nll) .lt. 90. ) then
+!      prod(i,ptnop) = 0.
+      loss(i,ptnop) = loss(i,pto2p)
+      loss(i,pthp)  = loss(i,pto2p)
+    endif
 
     !     loss term for hydrogen and helium
 
