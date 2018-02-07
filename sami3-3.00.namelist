@@ -45,7 +45,7 @@
   lmadala  = .true.,
   lcr      = .false.,
   lvs      = .false.,
-  lweimer  = .true.,   ! set lvs = .false. if .true
+  lweimer  = .false.,   ! set lvs = .false. if .true
   decay_time = 6.,
   pcrit      = 8.,
   lhwm93     = .false.,

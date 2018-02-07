@@ -340,7 +340,7 @@
 !       speaking, not exactly correct)
 
     do ni = nion1,nion2
-        do k = 1,nlm1
+        do k = 2,nlm1
             do j = 2,nf
                 do i = 2,nzm1
                     denic(i,j,k,ni) = denic(i,j,k,ni) &
@@ -374,7 +374,7 @@
         enddo
     enddo
 
-    do k = 1,nlm1
+    do k = 2,nlm1
         do j = 2,nf
             do i = 2,nzm1
                 tec(i,j,k) = tec(i,j,k) &
@@ -395,58 +395,66 @@
 
 !      for k = nl
 
-    do ni = nion1,nion2
-        do j = 2,nf
-            do i = 2,nzm1
-                k                = nl
-                deni0            = deni(i,j,k,ni)
-                ti0              = ti(i,j,k,ni)
-                denic(i,j,nl,ni) = denic(i,j,nl,ni) &
-                + dt * ( areap(i,j,nl)   * fluxnp(i,j,nl,ni) - &
-                areap(i,j+1,nl) * fluxnp(i,j+1,nl,ni) ) &
-                + dt * ( areas(i,j,nl)   * fluxns(i,j,nl,ni) - &
-                areas(i+1,j,nl) * fluxns(i+1,j,nl,ni) ) &
-                + dt * ( areah(i,j,nl)   * fluxnh(i,j,nl,ni) - &
-                areah(i,j,1)    * fluxnh(i,j,1,ni) )
-                deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
-                if ( deni(i,j,nl,ni) <= 0. ) &
-                deni(i,j,nl,ni) = deni0
-                tic(i,j,nl,ni) = tic(i,j,nl,ni) &
-                + dt * ( areap(i,j,nl)   * fluxtp(i,j,nl,ni) - &
-                areap(i,j+1,nl) * fluxtp(i,j+1,nl,ni) ) &
-                + dt * ( areas(i,j,nl)   * fluxts(i,j,nl,ni) - &
-                areas(i+1,j,nl) * fluxts(i+1,j,nl,ni) ) &
-                + dt * ( areah(i,j,nl)   * fluxth(i,j,nl,ni) - &
-                areah(i,j,1)    * fluxth(i,j,1,ni) )
-                ti(i,j,nl,ni)  = tic(i,j,nl,ni) / vol(i,j,nl)
-                if ( ti(i,j,nl,ni) <= 0. ) &
-                ti(i,j,nl,ni) = ti0
-            enddo
-        enddo
-    enddo
-
-    do j = 2,nf
-        do i = 2,nzm1
-            te0 = te(i,j,nl)
-            tec(i,j,nl) = tec(i,j,nl) &
-            + dt * ( areap(i,j,nl)   * fluxtep(i,j,nl) - &
-            areap(i,j+1,nl) * fluxtep(i,j+1,nl) ) &
-            + dt * ( areas(i,j,nl)   * fluxtes(i,j,nl) - &
-            areas(i+1,j,nl) * fluxtes(i+1,j,nl) ) &
-            + dt * ( areah(i,j,nl)   * fluxteh(i,j,nl) - &
-            areah(i,j,1)    * fluxteh(i,j,1) )
-            te(i,j,nl)  = tec(i,j,nl) / vol(i,j,nl)
-            if ( te(i,j,nl) <= 0. ) &
-            te(i,j,nl) = te0
-        enddo
-    enddo
-
+!!$    do ni = nion1,nion2
+!!$        do j = 2,nf
+!!$            do i = 2,nzm1
+!!$                k                = nl
+!!$                deni0            = deni(i,j,k,ni)
+!!$                ti0              = ti(i,j,k,ni)
+!!$
+!!$                denic(i,j,nl,ni) = denic(i,j,nl,ni) &
+!!$                + dt * ( areap(i,j,nl)   * fluxnp(i,j,nl,ni) - &
+!!$                areap(i,j+1,nl) * fluxnp(i,j+1,nl,ni) ) &
+!!$                + dt * ( areas(i,j,nl)   * fluxns(i,j,nl,ni) - &
+!!$                areas(i+1,j,nl) * fluxns(i+1,j,nl,ni) ) &
+!!$                + dt * ( areah(i,j,nl)   * fluxnh(i,j,nl,ni) - &
+!!$                areah(i,j,1)    * fluxnh(i,j,1,ni) )
+!!$
+!!$       if ( ni == ptmgp ) then
+!!$         u3(i,j,k) =  fluxnh(i,j,k,ni) 
+!!$         u4(i,j,k) =  fluxnh(i,j,k,ni) 
+!!$        endif
+!!$
+!!$                deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
+!!$
+!!$                if ( deni(i,j,nl,ni) <= 0. ) &
+!!$                deni(i,j,nl,ni) = deni0
+!!$                tic(i,j,nl,ni) = tic(i,j,nl,ni) &
+!!$                + dt * ( areap(i,j,nl)   * fluxtp(i,j,nl,ni) - &
+!!$                areap(i,j+1,nl) * fluxtp(i,j+1,nl,ni) ) &
+!!$                + dt * ( areas(i,j,nl)   * fluxts(i,j,nl,ni) - &
+!!$                areas(i+1,j,nl) * fluxts(i+1,j,nl,ni) ) &
+!!$                + dt * ( areah(i,j,nl)   * fluxth(i,j,nl,ni) - &
+!!$                areah(i,j,1)    * fluxth(i,j,1,ni) )
+!!$                ti(i,j,nl,ni)  = tic(i,j,nl,ni) / vol(i,j,nl)
+!!$                if ( ti(i,j,nl,ni) <= 0. ) &
+!!$                ti(i,j,nl,ni) = ti0
+!!$            enddo
+!!$        enddo
+!!$    enddo
+!!$
+!!$    do j = 2,nf
+!!$        do i = 2,nzm1
+!!$            te0 = te(i,j,nl)
+!!$            tec(i,j,nl) = tec(i,j,nl) &
+!!$            + dt * ( areap(i,j,nl)   * fluxtep(i,j,nl) - &
+!!$            areap(i,j+1,nl) * fluxtep(i,j+1,nl) ) &
+!!$            + dt * ( areas(i,j,nl)   * fluxtes(i,j,nl) - &
+!!$            areas(i+1,j,nl) * fluxtes(i+1,j,nl) ) &
+!!$            + dt * ( areah(i,j,nl)   * fluxteh(i,j,nl) - &
+!!$            areah(i,j,1)    * fluxteh(i,j,1) )
+!!$            te(i,j,nl)  = tec(i,j,nl) / vol(i,j,nl)
+!!$            if ( te(i,j,nl) <= 0. ) &
+!!$            te(i,j,nl) = te0
+!!$        enddo
+!!$    enddo
+!!$
 
 
 ! fill cells at j = 1 and nf with j = 2 and nfm1
 
     do ni = nion1,nion2
-        do k = 1,nl
+        do k = 2,nlm1
             do i = 2,nzm1
                 deni(i,1,k,ni)  = deni(i,2,k,ni)
             !             deni(i,nf,k,ni) = deni(i,nfm1,k,ni)
@@ -456,7 +464,7 @@
         enddo
     enddo
 
-    do k = 1,nl
+    do k = 2,nlm1
         do i = 2,nzm1
             te(i,1,k)    = te(i,2,k)
         enddo
