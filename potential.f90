@@ -516,10 +516,10 @@
     use misc_mod
     use grid_mod
 
-    real*8 :: phi_weimer_real(nfp1,nlt+1)
+    real :: phi_weimer_real(nfp1,nlt+1)
     real :: phi_weimer_interp(nfp1,nlt+1)
     real :: phi_weimer(nnx,nny)
-    real*8 :: hrutw1,hrutw2
+    real :: hrutw1,hrutw2
 
     data iread_weimer / 1 /
 

@@ -1,17 +1,17 @@
 
  &go 
-  maxstep  =   10,
-  hrmax    =   2.,
-  dthr     =   .016667e-4,
+  maxstep  =   2,
+  hrmax    =   24.,
+  dthr     =   .25e-5,
   hrpr     =   0., 
   dt0      =   4.,
-  rmin     =  90., 
-  altmin   =  85.,
-  fbar     =  130.,
-  f10p7    =  130.,
-  ap       =    9,
-  year     = 2001,
-  day      =   80,
+  rmin     =  80., 
+  altmin   =  50.,
+  fbar     =  173.,
+  f10p7    =  182.,
+  ap       =    21,
+  year     = 1999,
+  day      =   328,
   mmass    =   48 ,
   nion1    =    1,
   nion2    =    7,
@@ -23,7 +23,7 @@
   vw       =    0.
   gamss    =    .1,
   alt_crit_avg = 6370.
-  blat_max4 = 88.,
+  blat_max4 = 89.,
   blat_min  = 6.85,
   snn      =    1.,1.,1.,1.,1.,1.,1.,
   stn      =    1.,
@@ -45,7 +45,7 @@
   lmadala  = .true.,
   lcr      = .false.,
   lvs      = .false.,
-  lweimer  = .false.,   ! set lvs = .false. if .true
+  lweimer  = .true.,   ! set lvs = .false. if .true
   decay_time = 6.,
   pcrit      = 8.,
   lhwm93     = .false.,

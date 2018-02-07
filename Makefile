@@ -7,14 +7,14 @@ OBJ= parameter_mod.o  namelist_mod.o variable_mod.o message_passing_mod.o chemis
 
 # debug
 
-f90 = /opt/openmpi-1.4.3_gfortran/bin/mpif90 -fno-automatic -g -fcheck=all -Wall
-f77 = gfortran -fno-automatic -g -fcheck=all -Wall 
+#f90 = /opt/openmpi-1.4.3_gfortran/bin/mpif90 -fno-automatic -g -fcheck=all -Wall
+#f77 = gfortran -fno-automatic -g -fcheck=all -Wall 
 
 
 # intel ifort
 
-#  f90 = mpif90 -fp-model strict -save -O2 -mcmodel=large -shared-intel
-#  f77 = ifort  -fp-model strict -save -O2 -mcmodel=large -shared-intel
+  f90 = mpif90 -fp-model strict -save -O2 -mcmodel=large -shared-intel
+  f77 = ifort  -fp-model strict -save -O2 -mcmodel=large -shared-intel
 
 # debug
 

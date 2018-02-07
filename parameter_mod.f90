@@ -2,11 +2,11 @@
 module parameter_mod
 
 !      total number of workers
-    integer,parameter ::  numwork = 8
+    integer,parameter ::  numwork = 6
 
 !      number of altitudes (e.g., field lines)
 
-    integer,parameter :: nf   = 120
+    integer,parameter :: nf   = 124
     integer,parameter :: nfp1 = nf + 1
     integer,parameter :: nfm1 = nf - 1
     integer,parameter :: nfm2 = nf - 2 
@@ -21,7 +21,7 @@ module parameter_mod
 
 !      number of grid cells in longitudinal direction per worker
 
-    integer,parameter ::  nl   = 14, &
+    integer,parameter ::  nl   = 32, &
                           nlp1 = nl + 1, &
                           nlm1 = nl - 1  
 
