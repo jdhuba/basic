@@ -267,7 +267,7 @@
         allocate (ut(nz,nf,nlt),vt(nz,nf,nlt),vpit(nz,nf,nlt))
         allocate (tet(nz,nf,nlt),tnt(nz,nf,nlt))
         allocate (u1t(nz,nf,nlt),u2t(nz,nf,nlt),u3t(nz,nf,nlt), &
-                 u4t(nz,nf,nlt))
+                 u4t(nz,nf,nlt),u5t(nz,nf,nlt))
         allocate (vnqt(nz,nf,nlt),vnpt(nz,nf,nlt),vnphit(nz,nf,nlt))
         allocate (jpt(nz,nf,nlt),jphit(nz,nf,nlt))
         allocate (u1pt(nz,nf,nlt),u2st(nz,nf,nlt),u3ht(nz,nf,nlt))
@@ -427,6 +427,8 @@
                                   MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(u4, nz*nf*nl, MPI_REAL, iwrk, 0, &
                                   MPI_COMM_WORLD, status, ierr)
+                    call mpi_recv(u5, nz*nf*nl, MPI_REAL, iwrk, 0, &
+                                  MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(sigmap, nz*nf*nl, MPI_REAL, iwrk, 0, &
                                   MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(sigmah, nz*nf*nl, MPI_REAL, iwrk, 0, &
@@ -498,6 +500,7 @@
                                 u2t(i,j,kk)       = u2(i,j,k)
                                 u3t(i,j,kk)       = u3(i,j,k)
                                 u4t(i,j,kk)       = u4(i,j,k)
+                                u5t(i,j,kk)       = u5(i,j,k)
                                 sigmapt(i,j,kk)   = sigmap(i,j,k)
                                 sigmaht(i,j,kk)   = sigmah(i,j,k)
                                 sigmapict(i,j,kk) = sigmapic(i,j,k)
@@ -572,7 +575,7 @@
                 ntm = ntm + 1
                 call output ( hrut,ntm,istep,phi,denit,dennt,vsit, &
                               sumvsit,tit,ut,vt,vpit,tet,tnt,u1t, &
-                              u2t,u3t,u4t,vnqt,vnpt,vnphit,jpt,jphit, &
+                              u2t,u3t,u4t,u5t,vnqt,vnpt,vnphit,jpt,jphit, &
                               u1pt,u2st,u3ht,sigmapict,sigmahict, &
                               sigmapt,sigmaht )
                                          
@@ -1008,6 +1011,8 @@
                 call mpi_send(u3, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD,  ierr)
                 call mpi_send(u4, nz*nf*nl, MPI_REAL, 0, 0, &
+                              MPI_COMM_WORLD,  ierr)
+                call mpi_send(u5, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD,  ierr)
                 call mpi_send(sigmap, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD, ierr)
