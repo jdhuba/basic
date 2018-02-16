@@ -267,7 +267,7 @@
         allocate (ut(nz,nf,nlt),vt(nz,nf,nlt),vpit(nz,nf,nlt))
         allocate (tet(nz,nf,nlt),tnt(nz,nf,nlt))
         allocate (u1t(nz,nf,nlt),u2t(nz,nf,nlt),u3t(nz,nf,nlt), &
-                 u4t(nz,nf,nlt),u5t(nz,nf,nlt))
+                 u4t(nz,nf,nlt))
         allocate (vnqt(nz,nf,nlt),vnpt(nz,nf,nlt),vnphit(nz,nf,nlt))
         allocate (jpt(nz,nf,nlt),jphit(nz,nf,nlt))
         allocate (u1pt(nz,nf,nlt),u2st(nz,nf,nlt),u3ht(nz,nf,nlt))
@@ -427,8 +427,6 @@
                                   MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(u4, nz*nf*nl, MPI_REAL, iwrk, 0, &
                                   MPI_COMM_WORLD, status, ierr)
-                    call mpi_recv(u5, nz*nf*nl, MPI_REAL, iwrk, 0, &
-                                  MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(sigmap, nz*nf*nl, MPI_REAL, iwrk, 0, &
                                   MPI_COMM_WORLD, status, ierr)
                     call mpi_recv(sigmah, nz*nf*nl, MPI_REAL, iwrk, 0, &
@@ -500,7 +498,6 @@
                                 u2t(i,j,kk)       = u2(i,j,k)
                                 u3t(i,j,kk)       = u3(i,j,k)
                                 u4t(i,j,kk)       = u4(i,j,k)
-                                u5t(i,j,kk)       = u5(i,j,k)
                                 sigmapt(i,j,kk)   = sigmap(i,j,k)
                                 sigmaht(i,j,kk)   = sigmah(i,j,k)
                                 sigmapict(i,j,kk) = sigmapic(i,j,k)
@@ -575,7 +572,7 @@
                 ntm = ntm + 1
                 call output ( hrut,ntm,istep,phi,denit,dennt,vsit, &
                               sumvsit,tit,ut,vt,vpit,tet,tnt,u1t, &
-                              u2t,u3t,u4t,u5t,vnqt,vnpt,vnphit,jpt,jphit, &
+                              u2t,u3t,u4t,vnqt,vnpt,vnphit,jpt,jphit, &
                               u1pt,u2st,u3ht,sigmapict,sigmahict, &
                               sigmapt,sigmaht )
                                          
@@ -727,7 +724,7 @@
     ! already done in initialization
 
         if (restart) then
-            do nll = 1,nl
+            do nll = 2,nl-1
                 call neutambt (hrinit,nll)
             enddo
         endif
@@ -736,7 +733,9 @@
 
     ! parallel transport
 
-            do nll = 1,nl
+    ! Below is  nll = 2,nl-1 because of guard cells
+
+            do nll = 2,nl-1
                 do nfl = 1,nf
                     call zenith (hrut,nfl,nll)
                     call transprt (nfl,nll)
@@ -947,7 +946,7 @@
         ! update neutrals
 
             if( tneut >= 0.25 ) then
-                do nll = 1,nl
+                do nll = 2,nl-1
                     call neutambt (hrut,nll)
                 enddo
                 tneut = 0.
@@ -1011,8 +1010,6 @@
                 call mpi_send(u3, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD,  ierr)
                 call mpi_send(u4, nz*nf*nl, MPI_REAL, 0, 0, &
-                              MPI_COMM_WORLD,  ierr)
-                call mpi_send(u5, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD,  ierr)
                 call mpi_send(sigmap, nz*nf*nl, MPI_REAL, 0, 0, &
                               MPI_COMM_WORLD, ierr)
@@ -1822,7 +1819,7 @@
     ! neutral density, temperature, and neutral wind
 
         if ( .NOT. restart ) then
-            do nll = 1,nl
+            do nll = 2,nl-1
                 call neutambt (hrinit,nll)
             enddo
         endif
@@ -1961,9 +1958,9 @@
             enddo
         enddo
     endif
-    call mpi_bcast(sigidt,linesuv*nneut, &
+    call mpi_bcast(sigidt,linesuv*7, &
                    MPI_REAL,0,MPI_COMM_WORLD,ierr)
-    call mpi_bcast(sigint,linesnt*nneut, &
+    call mpi_bcast(sigint,linesnt*7, &
                    MPI_REAL,0,MPI_COMM_WORLD,ierr)
 
 !     below is altered from original
@@ -2195,15 +2192,6 @@
             + chloss(i,j)
             loss (i,j)  =  lossr / deni(i,nfl,nll,j)
         enddo
-
-!  add loss for NO+ below 90 km
-!  NEED TO IMPROVE THIS
-
-    if ( alts(i,nfl,nll) .lt. 90. ) then
-!      prod(i,ptnop) = 0.
-      loss(i,ptnop) = loss(i,pto2p)
-      loss(i,pthp)  = loss(i,pto2p)
-    endif
 
     !     loss term for hydrogen and helium
 

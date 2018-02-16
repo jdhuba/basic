@@ -308,13 +308,27 @@
 
 !      calculate flux in h-direction at interface (k = 1)
 !      (invoke periodic boundary condition)
-                                                                                   
+
+!  modify: extrapolate
+!  question: is k = 1 needed?
+ 
     do ni = nion1,nion2
         do j = 1,nf
             do i = 1,nz
-                if ( vexbh(i,j,1) >= 0 ) then
-                    fluxnh(i,j,1,ni) = deni(i,j,nl,ni) * vexbh(i,j,1)
-                    fluxth(i,j,1,ni) = ti(i,j,nl,ni)   * vexbh(i,j,1)
+               if ( vexbh(i,j,1) >= 0 ) then
+                 del_blat = (blatp(i,j,3)-blatp(i,j,1)) / &
+                           (blatp(i,j,2)-blatp(i,j,1))
+                 xdeni    = deni(i,j,3,ni) - &
+                           del_blat * ( deni(i,j,3,ni) - deni(i,j,2,ni) )
+                 xti      = ti(i,j,3,ni) -   &
+                           del_blat * ( ti(i,j,3,ni) - ti(i,j,2,ni) )
+                 fluxnh(i,j,1,ni) = xdeni * vexbh(i,j,1)
+                 fluxth(i,j,1,ni) = xti   * vexbh(i,j,1)
+
+!                    fluxnh(i,j,1,ni) = deni(i,j,1,ni) * vexbh(i,j,1) ! zero gradient
+!                    fluxth(i,j,1,ni) = ti(i,j,1,ni)   * vexbh(i,j,1) ! zero gradient
+!                    fluxnh(i,j,1,ni) = deni(i,j,nl,ni) * vexbh(i,j,1) ! periodic
+!                    fluxth(i,j,1,ni) = ti(i,j,nl,ni)   * vexbh(i,j,1) ! periodic
                 else
                     fluxnh(i,j,1,ni) = deni(i,j,1,ni) * vexbh(i,j,1)
                     fluxth(i,j,1,ni) = ti(i,j,1,ni)   * vexbh(i,j,1)
@@ -326,7 +340,13 @@
     do j = 1,nf
         do i = 1,nz
             if ( vexbh(i,j,1) >= 0 ) then
-                fluxteh(i,j,1) = te(i,j,nl) * vexbh(i,j,1)
+              del_blat = (blatp(i,j,3)-blatp(i,j,1)) / &
+                         (blatp(i,j,2)-blatp(i,j,1))
+              xte      = te(i,j,3) - &
+                         del_blat * ( te(i,j,3) - te(i,j,2) )
+              fluxteh(i,j,1) = xte * vexbh(i,j,1)
+!                fluxteh(i,j,1) = te(i,j,1) * vexbh(i,j,1)  ! zero gradient
+!                fluxteh(i,j,1) = te(i,j,nl) * vexbh(i,j,1) ! periodic 
             else
                 fluxteh(i,j,1) = te(i,j,1)  * vexbh(i,j,1)
             endif
@@ -395,63 +415,58 @@
 
 !      for k = nl
 
-!!$    do ni = nion1,nion2
-!!$        do j = 2,nf
-!!$            do i = 2,nzm1
-!!$                k                = nl
-!!$                deni0            = deni(i,j,k,ni)
-!!$                ti0              = ti(i,j,k,ni)
-!!$
-!!$                denic(i,j,nl,ni) = denic(i,j,nl,ni) &
-!!$                + dt * ( areap(i,j,nl)   * fluxnp(i,j,nl,ni) - &
-!!$                areap(i,j+1,nl) * fluxnp(i,j+1,nl,ni) ) &
-!!$                + dt * ( areas(i,j,nl)   * fluxns(i,j,nl,ni) - &
-!!$                areas(i+1,j,nl) * fluxns(i+1,j,nl,ni) ) &
-!!$                + dt * ( areah(i,j,nl)   * fluxnh(i,j,nl,ni) - &
-!!$                areah(i,j,1)    * fluxnh(i,j,1,ni) )
-!!$
-!!$       if ( ni == ptmgp ) then
-!!$         u3(i,j,k) =  fluxnh(i,j,k,ni) 
-!!$         u4(i,j,k) =  fluxnh(i,j,k,ni) 
-!!$        endif
-!!$
-!!$                deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
-!!$
-!!$                if ( deni(i,j,nl,ni) <= 0. ) &
-!!$                deni(i,j,nl,ni) = deni0
-!!$                tic(i,j,nl,ni) = tic(i,j,nl,ni) &
-!!$                + dt * ( areap(i,j,nl)   * fluxtp(i,j,nl,ni) - &
-!!$                areap(i,j+1,nl) * fluxtp(i,j+1,nl,ni) ) &
-!!$                + dt * ( areas(i,j,nl)   * fluxts(i,j,nl,ni) - &
-!!$                areas(i+1,j,nl) * fluxts(i+1,j,nl,ni) ) &
-!!$                + dt * ( areah(i,j,nl)   * fluxth(i,j,nl,ni) - &
-!!$                areah(i,j,1)    * fluxth(i,j,1,ni) )
-!!$                ti(i,j,nl,ni)  = tic(i,j,nl,ni) / vol(i,j,nl)
-!!$                if ( ti(i,j,nl,ni) <= 0. ) &
-!!$                ti(i,j,nl,ni) = ti0
-!!$            enddo
-!!$        enddo
-!!$    enddo
-!!$
-!!$    do j = 2,nf
-!!$        do i = 2,nzm1
-!!$            te0 = te(i,j,nl)
-!!$            tec(i,j,nl) = tec(i,j,nl) &
-!!$            + dt * ( areap(i,j,nl)   * fluxtep(i,j,nl) - &
-!!$            areap(i,j+1,nl) * fluxtep(i,j+1,nl) ) &
-!!$            + dt * ( areas(i,j,nl)   * fluxtes(i,j,nl) - &
-!!$            areas(i+1,j,nl) * fluxtes(i+1,j,nl) ) &
-!!$            + dt * ( areah(i,j,nl)   * fluxteh(i,j,nl) - &
-!!$            areah(i,j,1)    * fluxteh(i,j,1) )
-!!$            te(i,j,nl)  = tec(i,j,nl) / vol(i,j,nl)
-!!$            if ( te(i,j,nl) <= 0. ) &
-!!$            te(i,j,nl) = te0
-!!$        enddo
-!!$    enddo
+    do ni = nion1,nion2
+        do j = 2,nf
+            do i = 2,nzm1
+                k                = nl
+                deni0            = deni(i,j,k,ni)
+                ti0              = ti(i,j,k,ni)
+
+                denic(i,j,nl,ni) = denic(i,j,nl,ni) &
+                + dt * ( areap(i,j,nl)   * fluxnp(i,j,nl,ni) - &
+                areap(i,j+1,nl) * fluxnp(i,j+1,nl,ni) ) &
+                + dt * ( areas(i,j,nl)   * fluxns(i,j,nl,ni) - &
+                areas(i+1,j,nl) * fluxns(i+1,j,nl,ni) ) &
+                + dt * ( areah(i,j,nl)   * fluxnh(i,j,nl,ni) - &
+                areah(i,j,1)    * fluxnh(i,j,1,ni) )
+
+               deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
+
+                if ( deni(i,j,nl,ni) <= 0. ) &
+                deni(i,j,nl,ni) = deni0
+                tic(i,j,nl,ni) = tic(i,j,nl,ni) &
+                + dt * ( areap(i,j,nl)   * fluxtp(i,j,nl,ni) - &
+                areap(i,j+1,nl) * fluxtp(i,j+1,nl,ni) ) &
+                + dt * ( areas(i,j,nl)   * fluxts(i,j,nl,ni) - &
+                areas(i+1,j,nl) * fluxts(i+1,j,nl,ni) ) &
+                + dt * ( areah(i,j,nl)   * fluxth(i,j,nl,ni) - &
+                areah(i,j,1)    * fluxth(i,j,1,ni) )
+                ti(i,j,nl,ni)  = tic(i,j,nl,ni) / vol(i,j,nl)
+                if ( ti(i,j,nl,ni) <= 0. ) &
+                ti(i,j,nl,ni) = ti0
+            enddo
+        enddo
+    enddo
+
+    do j = 2,nf
+        do i = 2,nzm1
+            te0 = te(i,j,nl)
+            tec(i,j,nl) = tec(i,j,nl) &
+            + dt * ( areap(i,j,nl)   * fluxtep(i,j,nl) - &
+            areap(i,j+1,nl) * fluxtep(i,j+1,nl) ) &
+            + dt * ( areas(i,j,nl)   * fluxtes(i,j,nl) - &
+            areas(i+1,j,nl) * fluxtes(i+1,j,nl) ) &
+            + dt * ( areah(i,j,nl)   * fluxteh(i,j,nl) - &
+            areah(i,j,1)    * fluxteh(i,j,1) )
+            te(i,j,nl)  = tec(i,j,nl) / vol(i,j,nl)
+            if ( te(i,j,nl) <= 0. ) &
+            te(i,j,nl) = te0
+        enddo
+    enddo
+
 !!$
 
-
-! fill cells at j = 1 and nf with j = 2 and nfm1
+! fill cells at j = 1  with j = 2 
 
     do ni = nion1,nion2
         do k = 2,nlm1
@@ -507,39 +522,39 @@
 
 !   fix at j = nf (extapolate except at nz/2+1 - then interpolate)
 
-   j = nf
-
-    do ni = nion1,nion2
-      do k = 2,nlm1
-        do i = 1,nz/2
-          slope  = (blatp(i,j,k)   - blatp(i,j-1,k)  ) /&
-                   (blatp(i,j-1,k) - blatp(i,j-2,k))
-          deni(i,j,k,ni) = deni(i,j-1,k,ni) +  &
-                           slope * (deni(i,j-1,k,ni) - deni(i,j-2,k,ni)) 
-          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
-        enddo
-      enddo
-    enddo
-
-    do ni = nion1,nion2
-      do k = 2,nlm1
-        do i = nz/2+2,nz
-          slope  = (blatp(i,j,k)   - blatp(i,j-1,k)  ) /&
-                   (blatp(i,j-1,k) - blatp(i,j-2,k))
-          deni(i,j,k,ni) = deni(i,j-1,k,ni) +  &
-                           slope * (deni(i,j-1,k,ni) - deni(i,j-2,k,ni)) 
-          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
-        enddo
-      enddo
-    enddo
-
-    do ni = nion1,nion2
-      do k = 2,nlm1
-        i = nz/2+1
-          deni(i,j,k,ni) = 0.5 * ( deni(i-1,j,k,ni) + deni(i+1,j,k,ni) )
-          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
-      enddo
-    enddo
+!!$   j = nf
+!!$
+!!$    do ni = nion1,nion2
+!!$      do k = 2,nlm1
+!!$        do i = 1,nz/2
+!!$          slope  = (blatp(i,j,k)   - blatp(i,j-1,k)  ) /&
+!!$                   (blatp(i,j-1,k) - blatp(i,j-2,k))
+!!$          deni(i,j,k,ni) = deni(i,j-1,k,ni) +  &
+!!$                           slope * (deni(i,j-1,k,ni) - deni(i,j-2,k,ni)) 
+!!$          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
+!!$        enddo
+!!$      enddo
+!!$    enddo
+!!$
+!!$    do ni = nion1,nion2
+!!$      do k = 2,nlm1
+!!$        do i = nz/2+2,nz
+!!$          slope  = (blatp(i,j,k)   - blatp(i,j-1,k)  ) /&
+!!$                   (blatp(i,j-1,k) - blatp(i,j-2,k))
+!!$          deni(i,j,k,ni) = deni(i,j-1,k,ni) +  &
+!!$                           slope * (deni(i,j-1,k,ni) - deni(i,j-2,k,ni)) 
+!!$          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
+!!$        enddo
+!!$      enddo
+!!$    enddo
+!!$
+!!$    do ni = nion1,nion2
+!!$      do k = 2,nlm1
+!!$        i = nz/2+1
+!!$          deni(i,j,k,ni) = 0.5 * ( deni(i-1,j,k,ni) + deni(i+1,j,k,ni) )
+!!$          deni(i,j,k,ni) = max(deni(i,j,k,ni),denmin)          
+!!$      enddo
+!!$    enddo
 
     return
     end subroutine exb
