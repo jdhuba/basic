@@ -310,23 +310,23 @@
 !      (invoke periodic boundary condition)
 
 !  modify: extrapolate
-!  question: is k = 1 needed?
+
  
     do ni = nion1,nion2
         do j = 1,nf
             do i = 1,nz
                if ( vexbh(i,j,1) >= 0 ) then
-                 del_blat = (blatp(i,j,3)-blatp(i,j,1)) / &
-                           (blatp(i,j,2)-blatp(i,j,1))
+                 del_blon = (blonp(i,j,3)-blonp(i,j,1)) / &
+                           (blonp(i,j,2)-blonp(i,j,1))
                  xdeni    = deni(i,j,3,ni) - &
-                           del_blat * ( deni(i,j,3,ni) - deni(i,j,2,ni) )
+                           del_blon * ( deni(i,j,3,ni) - deni(i,j,2,ni) )
                  xti      = ti(i,j,3,ni) -   &
-                           del_blat * ( ti(i,j,3,ni) - ti(i,j,2,ni) )
+                           del_blon * ( ti(i,j,3,ni) - ti(i,j,2,ni) )
                  fluxnh(i,j,1,ni) = xdeni * vexbh(i,j,1)
                  fluxth(i,j,1,ni) = xti   * vexbh(i,j,1)
 
-!                    fluxnh(i,j,1,ni) = deni(i,j,1,ni) * vexbh(i,j,1) ! zero gradient
-!                    fluxth(i,j,1,ni) = ti(i,j,1,ni)   * vexbh(i,j,1) ! zero gradient
+!                    fluxnh(i,j,1,ni) = deni(i,j,2,ni) * vexbh(i,j,1) ! zero gradient
+!                    fluxth(i,j,1,ni) = ti(i,j,2,ni)   * vexbh(i,j,1) ! zero gradient
 !                    fluxnh(i,j,1,ni) = deni(i,j,nl,ni) * vexbh(i,j,1) ! periodic
 !                    fluxth(i,j,1,ni) = ti(i,j,nl,ni)   * vexbh(i,j,1) ! periodic
                 else
@@ -340,12 +340,12 @@
     do j = 1,nf
         do i = 1,nz
             if ( vexbh(i,j,1) >= 0 ) then
-              del_blat = (blatp(i,j,3)-blatp(i,j,1)) / &
-                         (blatp(i,j,2)-blatp(i,j,1))
+              del_blon = (blonp(i,j,3)-blonp(i,j,1)) / &
+                         (blonp(i,j,2)-blonp(i,j,1))
               xte      = te(i,j,3) - &
-                         del_blat * ( te(i,j,3) - te(i,j,2) )
+                         del_blon * ( te(i,j,3) - te(i,j,2) )
               fluxteh(i,j,1) = xte * vexbh(i,j,1)
-!                fluxteh(i,j,1) = te(i,j,1) * vexbh(i,j,1)  ! zero gradient
+!                fluxteh(i,j,1) = te(i,j,2) * vexbh(i,j,1)  ! zero gradient
 !                fluxteh(i,j,1) = te(i,j,nl) * vexbh(i,j,1) ! periodic 
             else
                 fluxteh(i,j,1) = te(i,j,1)  * vexbh(i,j,1)
@@ -430,7 +430,7 @@
                 + dt * ( areah(i,j,nl)   * fluxnh(i,j,nl,ni) - &
                 areah(i,j,1)    * fluxnh(i,j,1,ni) )
 
-               deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
+                deni(i,j,nl,ni)  = denic(i,j,nl,ni) / vol(i,j,nl)
 
                 if ( deni(i,j,nl,ni) <= 0. ) &
                 deni(i,j,nl,ni) = deni0
@@ -464,7 +464,6 @@
         enddo
     enddo
 
-!!$
 
 ! fill cells at j = 1  with j = 2 
 

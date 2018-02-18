@@ -2193,6 +2193,15 @@
             loss (i,j)  =  lossr / deni(i,nfl,nll,j)
         enddo
 
+!  add loss for NO+ below 90 km
+!  NEED TO IMPROVE THIS
+
+    if ( alts(i,nfl,nll) .lt. 90. ) then
+!      prod(i,ptnop) = 0.
+      loss(i,ptnop) = loss(i,pto2p)
+      loss(i,pthp)  = loss(i,pto2p)
+    endif
+
     !     loss term for hydrogen and helium
 
         if ( alts(i,nfl,nll) > pcrit*re ) then
@@ -2221,6 +2230,11 @@
         cfs(i,nll)   =  -fzero * &
         (clat*xrg(i,nfl,nll) + slat*xthg(i,nfl,nll)) &
         * (re + alts(i,nfl,nll)) * clat / re
+
+
+!       note: sign of gp expicitly accounted for
+!       in derivation, i.e., g = -gp phat
+!       so gp is positive here (JH)
 
         gp(i,nfl,nll)   = gzero &
         * ( re / (re + alts(i,nfl,nll)) ) ** 2 &
