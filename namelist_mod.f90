@@ -10,7 +10,7 @@ module namelist_mod
     integer :: psmooth,nion1,nion2
     integer :: maxstep,mmass
 
-    real :: snn(nneut)
+    real :: snn(7)
     real :: hrmax, dthr, hrpr, dt0, &
             rmin, altmin, fbar, f10p7, ap, &                            
             year, day, hrinit, tvn0, tvexb0, ver, veh, vw,&
