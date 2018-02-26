@@ -67,7 +67,11 @@
 
         ! photoelectron ionization
 
-            pei_rate = exp(-(alts(iz,nfl,nll)-150.)/40.)
+! can change alt_pei 
+! alt_pei = 20. enhances ionization below 150 km
+
+            alt_pei  = 40.
+            pei_rate = exp(-(alts(iz,nfl,nll)-150.)/alt_pei)
             if ( alts(iz,nfl,nll) > 200. ) pei_rate = 0.2
 
             phprodr(iz,ptop)  = phprodr(iz,ptop)  * (1. + pei_rate)
