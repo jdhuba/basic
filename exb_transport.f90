@@ -712,12 +712,12 @@
                 vpsny(i,j,k) * ynorms(i,j,k) + &
                 vpsnz(i,j,k) * znorms(i,j,k)   )
 
-                vph = vexbh_phi(i,j,k) * &
+                vhs = vexbh_phi(i,j,k) * &
                 ( vhsnx(i,j,k) * xnorms(i,j,k) + &
                 vhsny(i,j,k) * ynorms(i,j,k) + &
                 vhsnz(i,j,k) * znorms(i,j,k)   )
                             
-                vexbs_phi(i,j,k) = (vps + vph) &
+                vexbs_phi(i,j,k) = -(vps + vhs) &
                 * tvexb0
             enddo
         enddo

@@ -2,8 +2,8 @@ OBJ= parameter_mod.o  namelist_mod.o variable_mod.o message_passing_mod.o chemis
 
 # gfortran
 
-#f90  = /opt/openmpi-1.4.3_gfortran/bin/mpif90  -fno-automatic -O3 
-#f77  = gfortran -fno-automatic -O3
+#f90  = /opt/openmpi-1.4.3_gfortran/bin/mpif90  -fno-automatic -O3 -mcmodel=large
+#f77  = gfortran -fno-automatic -O3 -mcmodel=large
 
 # debug
 
