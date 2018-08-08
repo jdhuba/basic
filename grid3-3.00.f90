@@ -1197,13 +1197,13 @@
         do j = 1,nf
             do i = 1,nzp1
                             
-                ax1 = x(i,j+1,k+1) - x(i,j,k)
-                ay1 = y(i,j+1,k+1) - y(i,j,k)
-                az1 = z(i,j+1,k+1) - z(i,j,k)
+                ax1 = x(i,j+1,k) - x(i,j,k+1)
+                ay1 = y(i,j+1,k) - y(i,j,k+1)
+                az1 = z(i,j+1,k) - z(i,j,k+1)
 
-                bx1 = x(i,j,k+1) - x(i,j+1,k)
-                by1 = y(i,j,k+1) - y(i,j+1,k)
-                bz1 = z(i,j,k+1) - z(i,j+1,k)
+                bx1 = x(i,j+1,k+1) - x(i,j,k)
+                by1 = y(i,j+1,k+1) - y(i,j,k)
+                bz1 = z(i,j+1,k+1) - z(i,j,k)
 
                 cx1 =   ay1 * bz1 - az1 * by1
                 cy1 = -(ax1 * bz1 - az1 * bx1)
@@ -1225,13 +1225,13 @@
         do j = 1,nfp1
             do i = 1,nz
                             
-                ax1 = x(i,j,k+1) - x(i+1,j,k)
-                ay1 = y(i,j,k+1) - y(i+1,j,k)
-                az1 = z(i,j,k+1) - z(i+1,j,k)
+                ax1 = x(i+1,j,k+1) - x(i,j,k)
+                ay1 = y(i+1,j,k+1) - y(i,j,k)
+                az1 = z(i+1,j,k+1) - z(i,j,k)
 
-                bx1 = x(i+1,j,k+1) - x(i,j,k)
-                by1 = y(i+1,j,k+1) - y(i,j,k)
-                bz1 = z(i+1,j,k+1) - z(i,j,k)
+                bx1 = x(i+1,j,k) - x(i,j,k+1)
+                by1 = y(i+1,j,k) - y(i,j,k+1)
+                bz1 = z(i+1,j,k) - z(i,j,k+1)
 
                 cx1 =   ay1 * bz1 - az1 * by1
                 cy1 = -(ax1 * bz1 - az1 * bx1)
